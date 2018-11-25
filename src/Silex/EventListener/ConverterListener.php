@@ -48,11 +48,20 @@ class ConverterListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         $route = $this->routes->get($request->attributes->get('_route'));
-        if ($route && $converters = $route->getOption('_converters')) {
-            foreach ($converters as $name => $callback) {
-                $callback = $this->callbackResolver->resolveCallback($callback);
 
-                $request->attributes->set($name, call_user_func($callback, $request->attributes->get($name), $request));
+        if ($route && $converters = $route->getOption('_converters')) {
+            foreach ($converters as $name => $converter) {
+                $callback = $this->callbackResolver->resolveCallback(
+                    $converter['callback']
+                );
+
+                $request->attributes->set(
+                    $converter['output'],
+                    call_user_func(
+                        $callback,
+                        $request->attributes->get($name),
+                        $request
+                    ));
             }
         }
     }
