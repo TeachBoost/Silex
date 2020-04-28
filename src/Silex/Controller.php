@@ -85,6 +85,23 @@ class Controller
         return $this;
     }
 
+    /**
+     * This is needed to be compatible with the phpstan analyzer.
+     * It's not properly reading the __call method to forward the args.
+     *
+     * @param string $variable The variable name
+     * @param mixed  $callback A PHP callback that converts the original value
+     * @param string $output   Optional name to transform into
+     *
+     * @return Controller $this The current Controller instance
+     */
+    public function convert($variable, $callback, string $output = null)
+    {
+        $this->route->convert($variable, $callback, $output);
+
+        return $this;
+    }
+
     public function __call($method, $arguments)
     {
         if (!method_exists($this->route, $method)) {

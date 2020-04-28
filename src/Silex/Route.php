@@ -90,13 +90,21 @@ class Route extends BaseRoute
      *
      * @param string $variable The variable name
      * @param mixed  $callback A PHP callback that converts the original value
+     * @param string $output   Optional name to transform into
      *
      * @return Route $this The current Route instance
      */
-    public function convert($variable, $callback)
+    public function convert($variable, $callback, string $output = null)
     {
         $converters = $this->getOption('_converters');
-        $converters[$variable] = $callback;
+        $noop = function ($var) {
+            return $var;
+        };
+        $converters[$variable] = [
+            'callback' => $callback ?: $noop,
+            'output' => $output ?: $variable
+        ];
+
         $this->setOption('_converters', $converters);
 
         return $this;
